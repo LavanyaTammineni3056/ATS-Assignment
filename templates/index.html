@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <meta
+        name="description"
+        content="Mini Applicant Tracking System for managing candidates and hiring stages"
+    >
+
+    <title>Mini ATS | Recruitment Dashboard</title>
+
+    <!-- CSS -->
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='css/style.css') }}"
+    >
+
+</head>
+
+
+<body>
+
+
+    <!-- =====================================
+         SIDEBAR
+    ====================================== -->
+
+    <aside class="sidebar">
+
+        <div class="logo">
+
+            <h2>Mini ATS</h2>
+
+            <p>
+                Recruitment System
+            </p>
+
+        </div>
+
+
+        <nav>
+
+            <a
+                href="#"
+                class="nav-link active"
+                id="dashboardLink"
+            >
+                Dashboard
+            </a>
+
+
+            <a
+                href="#"
+                class="nav-link"
+                id="candidatesLink"
+            >
+                Candidates
+            </a>
+
+        </nav>
+
+    </aside>
+
+
+
+    <!-- =====================================
+         MAIN CONTENT
+    ====================================== -->
+
+    <main class="main-content">
+
+
+        <!-- =================================
+             TOP HEADER
+        ================================== -->
+
+        <header class="topbar">
+
+            <div>
+
+                <h1>
+                    Dashboard
+                </h1>
+
+                <p>
+                    Manage your recruitment pipeline
+                </p>
+
+            </div>
+
+
+            <button
+                type="button"
+                class="add-btn"
+                id="openCandidateModal"
+            >
+                + Add Candidate
+            </button>
+
+        </header>
+
+
+
+        <!-- =================================
+             DASHBOARD
+        ================================== -->
+
+        <section
+            class="dashboard"
+            id="dashboard"
+        >
+
+
+            <!-- Total -->
+
+            <div class="stat-card">
+
+                <p>
+                    Total Candidates
+                </p>
+
+                <h2 id="totalCandidates">
+                    0
+                </h2>
+
+            </div>
+
+
+
+            <!-- Applied -->
+
+            <div class="stat-card">
+
+                <p>
+                    Applied
+                </p>
+
+                <h2 id="appliedCandidates">
+                    0
+                </h2>
+
+            </div>
+
+
+
+            <!-- Screening -->
+
+            <div class="stat-card">
+
+                <p>
+                    Screening
+                </p>
+
+                <h2 id="screeningCandidates">
+                    0
+                </h2>
+
+            </div>
+
+
+
+            <!-- Interview -->
+
+            <div class="stat-card">
+
+                <p>
+                    Interview
+                </p>
+
+                <h2 id="interviewCandidates">
+                    0
+                </h2>
+
+            </div>
+
+
+
+            <!-- Selected -->
+
+            <div class="stat-card">
+
+                <p>
+                    Selected
+                </p>
+
+                <h2 id="selectedCandidates">
+                    0
+                </h2>
+
+            </div>
+
+
+
+            <!-- Rejected -->
+
+            <div class="stat-card">
+
+                <p>
+                    Rejected
+                </p>
+
+                <h2 id="rejectedCandidates">
+                    0
+                </h2>
+
+            </div>
+
+
+        </section>
+
+
+
+        <!-- =================================
+             CANDIDATES PAGE
+        ================================== -->
+
+        <section
+            class="candidates-section"
+            id="candidates"
+        >
+
+
+            <!-- Candidate Section Header -->
+
+            <div class="section-header">
+
+
+                <div>
+
+                    <h2>
+                        Candidates
+                    </h2>
+
+                    <p>
+                        View and manage applicants
+                    </p>
+
+                </div>
+
+
+
+                <!-- Search + Filter -->
+
+                <div class="filters">
+
+
+                    <input
+                        type="search"
+                        id="searchInput"
+                        placeholder="Search candidates..."
+                        aria-label="Search candidates"
+                        autocomplete="off"
+                    >
+
+
+                    <select
+                        id="stageFilter"
+                        aria-label="Filter candidates by stage"
+                    >
+
+                        <option value="All">
+                            All Stages
+                        </option>
+
+                        <option value="Applied">
+                            Applied
+                        </option>
+
+                        <option value="Screening">
+                            Screening
+                        </option>
+
+                        <option value="Interview">
+                            Interview
+                        </option>
+
+                        <option value="Selected">
+                            Selected
+                        </option>
+
+                        <option value="Rejected">
+                            Rejected
+                        </option>
+
+                    </select>
+
+
+                </div>
+
+            </div>
+
+
+
+            <!-- =================================
+                 CANDIDATE TABLE
+            ================================== -->
+
+            <div class="table-container">
+
+                <table>
+
+                    <thead>
+
+                        <tr>
+
+                            <th>
+                                Name
+                            </th>
+
+                            <th>
+                                Role
+                            </th>
+
+                            <th>
+                                Skills
+                            </th>
+
+                            <th>
+                                Experience
+                            </th>
+
+                            <th>
+                                Stage
+                            </th>
+
+                            <th>
+                                Actions
+                            </th>
+
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody id="candidateTableBody">
+
+                        <!--
+                            Candidate rows are
+                            inserted here by JavaScript.
+                        -->
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+
+        </section>
+
+
+    </main>
+
+
+
+    <!-- =====================================
+         ADD / EDIT CANDIDATE MODAL
+    ====================================== -->
+
+    <div
+        class="modal"
+        id="candidateModal"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="candidateModalTitle"
+    >
+
+
+        <div class="modal-content">
+
+
+            <!-- Modal Header -->
+
+            <div class="modal-header">
+
+
+                <h2 id="candidateModalTitle">
+                    Add Candidate
+                </h2>
+
+
+                <button
+                    type="button"
+                    class="close-btn"
+                    id="closeCandidateModal"
+                    aria-label="Close candidate form"
+                >
+                    &times;
+                </button>
+
+
+            </div>
+
+
+
+            <!-- =================================
+                 CANDIDATE FORM
+            ================================== -->
+
+            <form id="candidateForm">
+
+
+                <!-- Full Name -->
+
+                <div class="form-group">
+
+                    <label for="name">
+                        Full Name
+                    </label>
+
+                    <input
+                        type="text"
+                        id="name"
+                        name="name"
+                        placeholder="Enter candidate name"
+                        required
+                    >
+
+                </div>
+
+
+
+                <!-- Email -->
+
+                <div class="form-group">
+
+                    <label for="email">
+                        Email
+                    </label>
+
+                    <input
+                        type="email"
+                        id="email"
+                        name="email"
+                        placeholder="example@email.com"
+                        required
+                    >
+
+                </div>
+
+
+
+                <!-- Phone -->
+
+                <div class="form-group">
+
+                    <label for="phone">
+                        Phone
+                    </label>
+
+                    <input
+                        type="tel"
+                        id="phone"
+                        name="phone"
+                        placeholder="Enter phone number"
+                    >
+
+                </div>
+
+
+
+                <!-- Job Role -->
+
+                <div class="form-group">
+
+                    <label for="role">
+                        Job Role
+                    </label>
+
+                    <input
+                        type="text"
+                        id="role"
+                        name="role"
+                        placeholder="Example: Python Developer"
+                    >
+
+                </div>
+
+
+
+                <!-- Skills -->
+
+                <div class="form-group">
+
+                    <label for="skills">
+                        Skills
+                    </label>
+
+                    <input
+                        type="text"
+                        id="skills"
+                        name="skills"
+                        placeholder="Python, Flask, MongoDB"
+                    >
+
+                    <small class="form-help">
+                        Separate multiple skills with commas.
+                    </small>
+
+                </div>
+
+
+
+                <!-- Experience -->
+
+                <div class="form-group">
+
+                    <label for="experience">
+                        Experience (Years)
+                    </label>
+
+                    <input
+                        type="number"
+                        id="experience"
+                        name="experience"
+                        min="0"
+                        step="1"
+                        value="0"
+                    >
+
+                </div>
+
+
+
+                <!-- Hiring Stage -->
+
+                <div class="form-group">
+
+                    <label for="stage">
+                        Hiring Stage
+                    </label>
+
+
+                    <select
+                        id="stage"
+                        name="stage"
+                    >
+
+                        <option value="Applied">
+                            Applied
+                        </option>
+
+                        <option value="Screening">
+                            Screening
+                        </option>
+
+                        <option value="Interview">
+                            Interview
+                        </option>
+
+                        <option value="Selected">
+                            Selected
+                        </option>
+
+                        <option value="Rejected">
+                            Rejected
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+
+                <!-- Submit Button -->
+
+                <button
+                    type="submit"
+                    class="submit-btn"
+                >
+                    Save Candidate
+                </button>
+
+
+            </form>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- =====================================
+         JAVASCRIPT
+    ====================================== -->
+
+    <script
+        src="{{ url_for('static', filename='js/script.js') }}"
+    ></script>
+
+
+</body>
+
+</html>
